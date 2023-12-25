@@ -43,7 +43,7 @@ export default class EventCalendar extends React.Component {
   static defaultProps = {
     size: 30,
     initDate: new Date(),
-    formatHeader: 'DD MMMM YYYY',
+    formatHeader: 'DD/MM/YYYY',
   };
 
   _getItemLayout(data, index) {
@@ -90,6 +90,7 @@ export default class EventCalendar extends React.Component {
         scrollToFirst={scrollToFirst}
         start={start}
         end={end}
+        showLineHalf={this.props.showLineHalf}
       />
     );
   }
@@ -159,23 +160,26 @@ export default class EventCalendar extends React.Component {
     );
 
     let headerText = upperCaseHeader
-      ? this.state.date.format(formatHeader || 'DD MMMM YYYY').toUpperCase()
-      : this.state.date.format(formatHeader || 'DD MMMM YYYY');
+      ? this.state.date.format(formatHeader || 'DD/MM/YYYY').toUpperCase()
+      : this.state.date.format(formatHeader || 'DD/MM/YYYY');
 
     return (
       <View style={[this.styles.container, { width }]}>
         <View style={this.styles.header}>
           <TouchableOpacity
-            style={this.styles.arrowButton}
+            style={[this.styles.arrowButton, {marginRight: 16}]}
             onPress={this._previous}
           >
             {leftIcon}
           </TouchableOpacity>
-          <View style={this.styles.headerTextContainer}>
-            <Text style={this.styles.headerText}>{headerText}</Text>
+          <View style={this.styles.containerTitle}>
+            {this.props.renderTitle()}
+            <View style={this.styles.headerTextContainer}>
+              <Text style={this.styles.headerText}>{headerText}</Text>
+            </View>
           </View>
           <TouchableOpacity
-            style={this.styles.arrowButton}
+              style={[this.styles.arrowButton, {marginLeft: 16}]}
             onPress={this._next}
           >
             {rightIcon}

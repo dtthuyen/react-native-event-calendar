@@ -33,7 +33,7 @@ export default class DayView extends React.PureComponent {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const width = nextProps.width - LEFT_MARGIN;
     this.setState({
       packedEvents: populateEvents(nextProps.events, width, nextProps.start),
@@ -79,7 +79,7 @@ export default class DayView extends React.PureComponent {
   }
 
   _renderLines() {
-    const { format24h, start, end } = this.props;
+    const { format24h, start, end, showLineHalf } = this.props;
     const offset = this.calendarHeight / (end - start);
 
     return range(start, end + 1).map((i, index) => {
@@ -87,13 +87,13 @@ export default class DayView extends React.PureComponent {
       if (i === start) {
         timeText = ``;
       } else if (i < 12) {
-        timeText = !format24h ? `${i} AM` : i;
+        timeText = !format24h ? `${i} AM` : `${i}:00`;
       } else if (i === 12) {
-        timeText = !format24h ? `${i} PM` : i;
+        timeText = !format24h ? `${i} PM` : `${i}:00`;
       } else if (i === 24) {
-        timeText = !format24h ? `12 AM` : 0;
+        timeText = '';
       } else {
-        timeText = !format24h ? `${i - 12} PM` : i;
+        timeText = !format24h ? `${i - 12} PM` : `${i}:00`;
       }
       const { width, styles } = this.props;
       return [
@@ -109,13 +109,15 @@ export default class DayView extends React.PureComponent {
             style={[styles.line, { top: offset * index, width: width - 20 }]}
           />
         ),
-        <View
-          key={`lineHalf${i}`}
-          style={[
-            styles.line,
-            { top: offset * (index + 0.5), width: width - 20 },
-          ]}
-        />,
+        showLineHalf ? (
+            <View
+              key={`lineHalf${i}`}
+              style={[
+                styles.line,
+                {top: offset * (index + 0.5), width: width - 20},
+              ]}
+          />
+        ) : null,
       ];
     });
   }
